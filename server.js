@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const taskRoutes = require('./routes/tasks');
 const authRoutes = require('./routes/auth');
 const errorHandler = require('./middleware/errorHandler');
@@ -9,7 +10,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-
+// Enable CORS
+app.use(cors())
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 

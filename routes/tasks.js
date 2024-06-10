@@ -17,15 +17,25 @@ router.post('/tasks', auth, async (req, res) => {
   }
 });
 
-// Retrieve all tasks with pagination (specific to logged-in user)
+// Retrieve all tasks with pagination, search, and filtering
 router.get('/tasks', auth, async (req, res) => {
-  const { page = 1, limit = 10 } = req.query; // Default to page 1 and 10 tasks per page
+  const { page = 1, limit = 10, title, completed } = req.query; // Default to page 1 and 10 tasks per page
+  const query = { owner: req.user.id };
+
+  if (title) {
+    query.title = { $regex: title, $options: 'i' }; // Case-insensitive regex search
+  }
+
+  if (completed) {
+    query.completed = completed === 'true';
+  }
+
   try {
-    const tasks = await Task.find({ owner: req.user.id })
+    const tasks = await Task.find(query)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
-    const count = await Task.countDocuments({ owner: req.user.id });
+    const count = await Task.countDocuments(query);
 
     res.json({
       tasks,
@@ -37,12 +47,12 @@ router.get('/tasks', auth, async (req, res) => {
   }
 });
 
-// Retrieve a single task by ID (specific to logged-in user)
+// Retrieve a single task by ID
 router.get('/tasks/:id', auth, async (req, res) => {
   try {
     const task = await Task.findOne({ _id: req.params.id, owner: req.user.id });
     if (!task) {
-      return res.status(404).send();
+      return res.status(404).send({ message: 'Task not found' });
     }
     res.send(task);
   } catch (error) {
@@ -50,7 +60,7 @@ router.get('/tasks/:id', auth, async (req, res) => {
   }
 });
 
-// Update a task by ID (specific to logged-in user)
+// Update a task by ID
 router.patch('/tasks/:id', auth, async (req, res) => {
   try {
     const task = await Task.findOneAndUpdate(
@@ -59,7 +69,7 @@ router.patch('/tasks/:id', auth, async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!task) {
-      return res.status(404).send();
+      return res.status(404).send({ message: 'Task not found' });
     }
     res.send(task);
   } catch (error) {
@@ -67,5 +77,17 @@ router.patch('/tasks/:id', auth, async (req, res) => {
   }
 });
 
-// Delete a task by ID (specific to logged-in user)
-router.delete(
+// Delete a task by ID
+router.delete('/tasks/:id', auth, async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
+    if (!task) {
+      return res.status(404).send({ message: 'Task not found' });
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+module.exports = router;

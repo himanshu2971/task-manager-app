@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TaskList from './pages/TaskList';
 import TaskForm from './pages/TaskForm';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
   return (
@@ -15,8 +16,9 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/tasks" element={<TaskList />} />
-        <Route path="/create-task" element={<TaskForm />} />
+        <Route path="/tasks" element={<PrivateRoute element={TaskList} />} />
+        <Route path="/create-task" element={<PrivateRoute element={TaskForm} />} />
+        <Route path="/edit-task/:id" element={<PrivateRoute element={TaskForm} />} />
       </Routes>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const TaskList = () => {
@@ -32,6 +33,7 @@ const TaskList = () => {
             <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>
             <p>Priority: {task.priority}</p>
             <p>Status: {task.completed ? 'Completed' : 'Pending'}</p>
+            <Link to={`/edit-task/${task._id}`}>Edit</Link>
           </li>
         ))}
       </ul>
