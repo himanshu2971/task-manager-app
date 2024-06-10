@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -11,13 +11,13 @@ const App = () => {
   return (
     <div>
       <NavBar />
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Route path="/tasks" component={TaskList} />
-        <Route path="/create-task" component={TaskForm} />
-      </Switch>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/tasks" element={<TaskList />} />
+        <Route path="/create-task" element={<TaskForm />} />
+      </Routes>
     </div>
   );
 };
